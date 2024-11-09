@@ -1,0 +1,8 @@
+# code stuff
+.env
+.*venv
+*__
+
+# macOS stuff
+.env
+.DS_Store
