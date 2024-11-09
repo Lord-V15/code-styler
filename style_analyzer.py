@@ -6,7 +6,7 @@ generate_report(issues): Generates all the stdout for style issues detected
 _apply_corrections(): Applies all corrections to the file (for --auto flag)
 Note: This file has been formatted using black.
 '''
-import ast
+import ast # to process syntax grammar
 import re
 from dataclasses import dataclass
 from typing import List, Dict, Set, Optional
@@ -19,7 +19,6 @@ class StyleIssue:
 
     filename: str
     line_number: int
-    column: int
     code: str  # Issue code (e.g., E201 for whitespace)
     description: str
     fix: Optional[str] = None  # The corrected line if available
@@ -60,7 +59,6 @@ class PEP8Analyzer:
                     StyleIssue(
                         self.filename,
                         i,
-                        100,
                         "E501",
                         "Line too long (exceeds 100 characters)",
                     )
@@ -78,7 +76,6 @@ class PEP8Analyzer:
                         StyleIssue(
                             self.filename,
                             i,
-                            0,
                             "E111",
                             "Indentation is not a multiple of 4",
                             corrected,
@@ -110,7 +107,6 @@ class PEP8Analyzer:
                         StyleIssue(
                             self.filename,
                             i,
-                            match.start(),
                             "E225",
                             "Missing whitespace around operator",
                             corrected,
@@ -126,7 +122,6 @@ class PEP8Analyzer:
                     StyleIssue(
                         self.filename,
                         i,
-                        len(line.rstrip()),
                         "W291",
                         "Trailing whitespace",
                         corrected,
@@ -153,7 +148,6 @@ class PEP8Analyzer:
                     StyleIssue(
                         self.filename,
                         orig_idx,
-                        0,
                         "I100",
                         "Import statements are not in alphabetical order",
                         sort_imp,
@@ -164,41 +158,42 @@ class PEP8Analyzer:
 
     def _check_naming_conventions(self):
         """Check naming conventions for variables, functions, and classes."""
-        tree = ast.parse("".join(self.original_lines))
+        # Split code into lines
+        lines = self.original_lines
+        errors = []
 
-        class NamingVisitor(ast.NodeVisitor):
-            def __init__(self):
-                self.issues = []
-
-            def visit_ClassDef(self, node):
-                if not re.match(r"^[A-Z][a-zA-Z0-9]*$", node.name):
-                    self.issues.append(
+        # Check class names
+        for line, num in zip(lines, range(len(lines))):
+            if line.startswith('class'):
+                class_name = line.split('class')[1].strip()
+                if not class_name[0].isupper():
+                    # print(f'Class name "{class_name}" should use CapWords convention')
+                    errors.append(
                         StyleIssue(
                             self.filename,
-                            node.lineno,
-                            node.col_offset,
+                            num+1,
                             "N801",
-                            f'Class name "{node.name}" should use CapWords convention',
+                            f'Class name "{class_name}" should use CapWords convention',
                         )
                     )
-                self.generic_visit(node)
 
-            def visit_FunctionDef(self, node):
-                if not re.match(r"^[a-z_][a-z0-9_]*$", node.name):
-                    self.issues.append(
+        # Check function names
+        for line, num in zip(lines, range(len(lines))):
+            if line.startswith('def'):
+                func_name = line.split('def')[1].split('(')[0].strip()
+                if not func_name[0].islower():
+                    
+                    errors.append(
                         StyleIssue(
                             self.filename,
-                            node.lineno,
-                            node.col_offset,
+                            num+1,
                             "N802",
-                            f'Function name "{node.name}" should be lowercase',
+                            f'Function name "{func_name}" should be lowercase',
                         )
                     )
-                self.generic_visit(node)
+                    # print(f'Function name "{func_name}" should be lowercase')
 
-        visitor = NamingVisitor()
-        visitor.visit(tree)
-        self.issues.extend(visitor.issues)
+        self.issues.extend(errors)
 
     def _apply_corrections(self):
         """Apply all accumulated corrections to the file."""
@@ -221,25 +216,25 @@ def generate_report(issues: List[StyleIssue]) -> str:
     if not issues:
         return "\033[92m✨No style issues detected✨"
 
-    report = ["\033[1m \033[95m\nPEP 8 Style Analysis Report", "=" * 40]  # line-by-line print
+    report = ["\033[1m\nPEP 8 Style Analysis Report", "=" * 40]  # line-by-line print
 
     for issue in issues:
-        report.extend(
+        report.extend(  # warnings in yellow
             [
-                "\033[93m" + f"\nFile: {issue.filename}",
-                "\033[93m" + f"Line {issue.line_number}, Column {issue.column}",
+                "\033[93m" + f"File: {issue.filename}",
+                "\033[93m" + f"Line {issue.line_number}",
                 "\033[93m" + f"Code: {issue.code}",
                 "\033[93m" + f"Issue: {issue.description}",
-                "-" * 40,
+                "\033[0m-" * 40, # reset colour to white
             ]
-        )  # issues are warnings in yellow
+        )
 
     return "\n".join(report)
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python style_analyzer.py <filename> [--auto-correct]")
+        print("\033[91mError:"+"Usage: python style_analyzer.py <filename> [--auto]")
         sys.exit(1)
 
     filename = sys.argv[1]
@@ -251,7 +246,7 @@ def main():
         print(generate_report(issues))
 
         if auto_correct:
-            analyzer._apply_corrections()
+            analyzer._apply_corrections() # nothing is returned
 
     except Exception as e:
         print("\033[91m" + f"Error analyzing file: {e}")  # error in red

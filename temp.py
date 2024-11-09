@@ -3,9 +3,9 @@
 from fastapi import HTTPException
 from itertools import combinations
 from utils.common_utils import clean_value
-import logging
+import logging 
 import numpy as np
-import pandas as pd
+import pandas as pd 
 
 logging.basicConfig(level = logging.INFO)
 logger = logging.getLogger("Data Sanity")
@@ -93,7 +93,7 @@ class DataSanity:
         return final_result
 
 
-def ingredients_analysis(df, ingredient_names):
+def Ingredients_analysis(df, ingredient_names):
     temp1 = pd.DataFrame(
         (
             (
