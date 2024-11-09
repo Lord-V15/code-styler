@@ -167,13 +167,14 @@ class PEP8Analyzer:
             if line.startswith('class'):
                 class_name = line.split('class')[1].strip()
                 if not class_name[0].isupper():
-                    # print(f'Class name "{class_name}" should use CapWords convention')
+                    corrected = class_name[0].upper() + class_name[1:]
                     errors.append(
                         StyleIssue(
                             self.filename,
                             num+1,
                             "N801",
                             f'Class name "{class_name}" should use CapWords convention',
+                            corrected
                         )
                     )
 
@@ -182,18 +183,22 @@ class PEP8Analyzer:
             if line.startswith('def'):
                 func_name = line.split('def')[1].split('(')[0].strip()
                 if not func_name[0].islower():
-                    
+                    corrected = func_name[0].lower() + func_name[1:]
                     errors.append(
                         StyleIssue(
                             self.filename,
                             num+1,
                             "N802",
                             f'Function name "{func_name}" should be lowercase',
+                            corrected
                         )
                     )
                     # print(f'Function name "{func_name}" should be lowercase')
 
         self.issues.extend(errors)
+        if self.auto_correct:
+            for error in errors:
+                self.corrected_lines[error.line_number] = error.fix
 
     def _apply_corrections(self):
         """Apply all accumulated corrections to the file."""
@@ -208,7 +213,7 @@ class PEP8Analyzer:
         with open(self.filename, "w") as f:
             f.write("\n".join(corrected_content)) 
         # auto fixes in green
-        print("\033[92m🧼Auto-corrections applied to the file successfully🧼")
+        print("\033[0m🧼Auto-corrections applied to the file successfully🧼")
 
 
 def generate_report(issues: List[StyleIssue]) -> str:
