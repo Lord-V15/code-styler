@@ -3,7 +3,7 @@
 from fastapi import HTTPException
 from itertools import combinations
 from utils.common_utils import clean_value
-import logging 
+import logging
 import numpy as np
 import pandas as pd 
 

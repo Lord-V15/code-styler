@@ -19,6 +19,7 @@ The analyzer checks for:
 ```bash
 git clone <repository-url>
 cd pep8-analyzer
+pip install -r req.txt
 ```
 
 ## Usage
@@ -44,11 +45,6 @@ Code: W291
 Issue: Trailing whitespace
 ----------------------------------------
 File: temp.py
-Line 8
-Code: W291
-Issue: Trailing whitespace
-----------------------------------------
-File: temp.py
 Line 96
 Code: N802
 Issue: Function name "Ingredients_analysis" should be lowercase
@@ -68,7 +64,7 @@ Some issues (like line length) require manual intervention and are only reported
 ## Running Tests
 
 ```bash
-python -m unittest test_style_analyzer.py
+pytest test_style_analyzer.py
 ```
 
 ## Dependencies
@@ -76,6 +72,7 @@ python -m unittest test_style_analyzer.py
 - Python 3.7+
 - ast (standard library)
 - re (standard library)
+- pytest (for unit tests)
 
 ## Future Improvements
 
@@ -94,7 +91,7 @@ python -m unittest test_style_analyzer.py
 
 4. Integration:
    - Git pre-commit hooks for forced integration
-   - CI/CD pipeline github action checks
+   - CI/CD github action checks for pytest
    - Batch processing for multiple files
 
 
