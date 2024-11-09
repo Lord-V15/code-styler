@@ -168,13 +168,14 @@ class PEP8Analyzer:
                 class_name = line.split('class')[1].strip()
                 if not class_name[0].isupper():
                     corrected = class_name[0].upper() + class_name[1:]
+                    corrected_line = line.replace(class_name, corrected)
                     errors.append(
                         StyleIssue(
                             self.filename,
                             num+1,
                             "N801",
                             f'Class name "{class_name}" should use CapWords convention',
-                            corrected
+                            corrected_line
                         )
                     )
 
@@ -184,13 +185,14 @@ class PEP8Analyzer:
                 func_name = line.split('def')[1].split('(')[0].strip()
                 if not func_name[0].islower():
                     corrected = func_name[0].lower() + func_name[1:]
+                    corrected_line = line.replace(func_name, corrected)
                     errors.append(
                         StyleIssue(
                             self.filename,
                             num+1,
                             "N802",
                             f'Function name "{func_name}" should be lowercase',
-                            corrected
+                            corrected_line
                         )
                     )
                     # print(f'Function name "{func_name}" should be lowercase')
