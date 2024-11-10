@@ -18,7 +18,7 @@ The analyzer checks for:
 
 ```bash
 git clone <repository-url>
-cd pep8-analyzer
+cd code-styler
 pip install -r req.txt
 ```
 
@@ -91,7 +91,6 @@ pytest test_style_analyzer.py
 
 4. Integration:
    - Git pre-commit hooks for forced integration
-   - CI/CD github action checks for pytest
    - Batch processing for multiple files
-
+   - [x] CI/CD github action checks for pytest
 
