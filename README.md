@@ -1,4 +1,5 @@
 # PEP 8 Style Analyzer and Auto-corrector
+[![Build](https://github.com/Lord-V15/code-styler/actions/workflows/pull.yml/badge.svg)](https://github.com/Lord-V15/code-styler/actions/workflows/pull.yml)
 
 This tool analyzes Python code for PEP 8 style guideline violations and can automatically fix common issues. It helps maintain consistent code style across Python projects.
 
