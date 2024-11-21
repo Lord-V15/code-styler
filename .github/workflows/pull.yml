@@ -1,0 +1,46 @@
+name: Build
+
+on: 
+  pull_request:
+
+jobs:
+  unit-tests:
+    name: PyTest checks
+    runs-on: ubuntu-latest
+  
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python version
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r req.txt
+      
+      - name: Run PyTest
+        run: python3 -m pytest test_style_analyzer.py
+
+  script-test:
+    name: style_analyzer demo run
+    runs-on: ubuntu-latest
+    needs: unit-tests
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python version
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Check issues temp file
+        run: python style_analyzer.py temp.py
+
+      - name: Fix issues in temp file
+        run: python style_analyzer.py temp.py --auto

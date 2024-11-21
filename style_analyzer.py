@@ -6,7 +6,6 @@ generate_report(issues): Generates all the stdout for style issues detected
 _apply_corrections(): Applies all corrections to the file (for --auto flag)
 Note: This file has been formatted using black.
 '''
-import ast # to process syntax grammar
 import re
 from dataclasses import dataclass
 from typing import List, Dict, Set, Optional
@@ -205,7 +204,7 @@ class PEP8Analyzer:
     def _apply_corrections(self):
         """Apply all accumulated corrections to the file."""
         if not self.corrected_lines:
-            print("\033[96m🤌 Nothing to auto-correct. Code is clean.")
+            print("\033[96m🤌 Nothing to auto-correct. Code is clean.\n")
             return
 
         corrected_content = []
@@ -215,13 +214,13 @@ class PEP8Analyzer:
         with open(self.filename, "w") as f:
             f.write("\n".join(corrected_content)) 
         # auto fixes in green
-        print("\033[0m🧼Auto-corrections applied to the file successfully🧼")
+        print("\033[0m\033[1m🧼Auto-corrections applied to the file successfully🧼\n")
 
 
 def generate_report(issues: List[StyleIssue]) -> str:
     """Generate a formatted report of style issues."""
     if not issues:
-        return "\033[92m✨No style issues detected✨"
+        return "\033[92m\n✨No style issues detected✨"
 
     report = ["\033[1m\nPEP 8 Style Analysis Report", "=" * 40]  # line-by-line print
 
@@ -254,6 +253,8 @@ def main():
 
         if auto_correct:
             analyzer._apply_corrections() # nothing is returned
+        else:
+            print('') # for spacing
 
     except Exception as e:
         print("\033[91m" + f"Error analyzing file: {e}")  # error in red
